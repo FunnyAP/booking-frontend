@@ -17,7 +17,7 @@ export default function Home() {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get("http://localhost:8000/api/movies");
+        const response = await axios.get("${process.env.NEXT_PUBLIC_API_BASE_URL}/movies");
         const movies = response.data.movies;
         
         setMoviesNow(movies.filter(movie => movie.status === 'now_showing'));
