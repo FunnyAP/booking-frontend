@@ -18,7 +18,7 @@ export default function Home() {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get("http://anhemphim.free.nf/api/movies");
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/movies`);
         const movies = response.data.movies;
         
         setMoviesNow(movies.filter(movie => movie.status === 'now_showing'));
@@ -38,7 +38,7 @@ export default function Home() {
     <Link href={`/movies/${movie.id}`} passHref>
       <div className="h-full flex flex-col rounded-lg overflow-hidden shadow-none border border-gray-700 cursor-pointer no-underline bg-gray-800 text-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-gray-500">
         <img
-          src={`http://localhost:8000/uploads/${movie.poster.split('/').pop()}`}
+          src={`${process.env.NEXT_PUBLIC_API_URL.replace('/api', '')}/uploads/${movie.poster.split('/').pop()}`}
           alt={movie.title}
           className="h-[380px] w-full object-cover transition-transform duration-300 hover:scale-103"
         />
