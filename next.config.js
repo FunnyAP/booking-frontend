@@ -5,8 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'localhost',
-        port: '8000',
+        hostname: 'anhemphim.free.nf',
         pathname: '/uploads/**',
       },
     ],
@@ -15,7 +14,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://127.0.0.1:8000/api/:path*", // Proxy Laravel
+        destination: "http://anhemphim.free.nf/api/:path*", // Proxy Laravel backend thực tế
       },
     ];
   },
