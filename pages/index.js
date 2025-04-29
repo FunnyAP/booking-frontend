@@ -18,7 +18,7 @@ export default function Home() {
         setLoading(true);
         setError(null);
         
-        const response = await axios.get("http://localhost:8000/api/movies");
+        const response = await axios.get("http://anhemphim.free.nf/api/movies");
         const movies = response.data.movies;
         
         setMoviesNow(movies.filter(movie => movie.status === 'now_showing'));
