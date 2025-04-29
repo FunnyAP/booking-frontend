@@ -4,6 +4,7 @@ import axios from "axios";
 import Link from "next/link";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Banner from '../components/Banner';
 
 export default function Home() {
   const [moviesNow, setMoviesNow] = useState([]);
@@ -78,6 +79,7 @@ export default function Home() {
       </Head>
 
       <Header />
+      <Banner />
 
       {/* Main content with proper spacing */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -86,12 +88,12 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-2 sm:px-0">
             <h2 className="text-2xl font-bold mb-6 pb-2 relative inline-block">
               PHIM ĐANG CHIẾU
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500 rounded"></span>
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-white rounded"></span>
             </h2>
             
             {loading ? (
               <div className="text-center py-12">
-                <div className="inline-block w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="inline-block w-14 h-14 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : error ? (
               <div className="text-center py-8 bg-gray-800 bg-opacity-50 rounded-lg">
@@ -118,12 +120,12 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-2 sm:px-0">
             <h2 className="text-2xl font-bold mb-6 pb-2 relative inline-block">
               PHIM SẮP CHIẾU
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500 rounded"></span>
+              <span className="absolute bottom-0 left-0 w-full h-1 bg-white rounded"></span>
             </h2>
             
             {loading ? (
               <div className="text-center py-12">
-                <div className="inline-block w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="inline-block w-14 h-14 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
               </div>
             ) : error ? (
               <div className="text-center py-8 bg-gray-800 bg-opacity-50 rounded-lg">

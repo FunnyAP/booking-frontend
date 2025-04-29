@@ -1,0 +1,56 @@
+.container {
+    padding: 20px;
+    background: #f9f9f9;
+  }
+  
+  .title {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .dateSelector {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .dateButton {
+    min-width: 50px;
+  }
+  
+  .movieItem {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .movieImage {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+  }
+  
+  .showtimes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .showtimeButton {
+    background: #fff;
+    border: 1px solid #1976d2;
+    color: #1976d2;
+    padding: 5px 10px;
+  }
+  .showtimeButton:hover {
+    background: #1976d2;
+    color: white;
+  }
+  

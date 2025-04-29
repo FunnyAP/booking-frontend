@@ -2,8 +2,23 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['localhost'], // Cho phép tải ảnh từ localhost
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/uploads/**',
+      },
+    ],
   },
-}
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "http://127.0.0.1:8000/api/:path*", // Proxy Laravel
+      },
+    ];
+  },
+};
 
-module.exports = nextConfig
+export default nextConfig;

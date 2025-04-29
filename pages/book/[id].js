@@ -1,3 +1,4 @@
+// ✅ File: /pages/book/[id].js (kết hợp chọn ghế + mở ComboModal chọn bắp nước riêng)
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import axios from 'axios';

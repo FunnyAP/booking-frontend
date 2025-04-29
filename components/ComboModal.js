@@ -1,36 +1,103 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-export default function ComboModal({ open, onClose }) {
-  const [combos, setCombos] = useState([]);
+export default function ComboModal({
+  open,
+  onClose,
+  selectedSeats,
+  showtime,
+  movie,
+  cinema,
+  totalTicketPrice,
+}) {
+  const [products, setProducts] = useState([]);
   const [quantities, setQuantities] = useState({});
+
+  const getImageUrl = (path) =>
+    `http://localhost:8000/uploads/${path.split('/').pop()}`;
 
   useEffect(() => {
     if (open) {
-      axios.get('http://localhost:8000/api/products/combos')
-        .then(res => {
-          setCombos(res.data.combos || []);
-          const initialQuantities = {};
-          res.data.combos.forEach(combo => {
-            initialQuantities[combo.id] = 0;
-          });
-          setQuantities(initialQuantities);
+      axios
+        .get('http://localhost:8000/api/extras')
+        .then((res) => {
+          const combos = res.data.combos || res.data || [];
+          setProducts(combos);
+          const initial = {};
+          combos.forEach((combo) => (initial[combo.id] = 0));
+          setQuantities(initial);
         })
-        .catch(err => console.error('Lỗi lấy combo:', err));
+        .catch((err) => console.error('Lỗi lấy combo:', err));
     }
   }, [open]);
 
-  const updateQuantity = (comboId, delta) => {
-    setQuantities(prev => ({
+  const updateQuantity = (id, delta) => {
+    setQuantities((prev) => ({
       ...prev,
-      [comboId]: Math.max(0, (prev[comboId] || 0) + delta)
+      [id]: Math.max(0, (prev[id] || 0) + delta),
     }));
   };
 
-  const total = combos.reduce((acc, combo) => {
-    const qty = quantities[combo.id] || 0;
-    return acc + combo.price * qty;
-  }, 0);
+  const extrasTotal = products.reduce(
+    (sum, item) => sum + item.price * (quantities[item.id] || 0),
+    0
+  );
+
+  const total = totalTicketPrice + extrasTotal;
+
+  const handleConfirm = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      alert('⚠️ Bạn cần đăng nhập để đặt vé!');
+      window.location.href = '/login';
+      return;
+    }
+
+    try {
+      const extras = products
+        .filter((item) => quantities[item.id] > 0)
+        .map((item) => ({
+          product_id: item.id,
+          quantity: quantities[item.id],
+          price: item.price,
+        }));
+
+      const seats = selectedSeats.map((id) => ({
+        seat_id: id,
+        price: showtime.ticket_price,
+      }));
+
+      const payload = {
+        showtime_id: showtime.id,
+        seats,
+        total_price: total,
+      };
+
+      if (extras.length > 0) {
+        payload.extras = extras;
+      }
+
+      console.log('📦 Payload gửi đi:', payload);
+
+      await axios.post('http://localhost:8000/api/bookings', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+        },
+      });
+
+      alert('🎉 Đặt vé thành công!');
+      window.location.href = '/profile';
+    } catch (err) {
+      console.error('❌ Axios error:', err);
+      if (err.response?.data?.error) {
+        alert(`❌ Lỗi: ${err.response.data.error}`);
+      } else {
+        alert('❌ Đặt vé thất bại!');
+      }
+    }
+  };
 
   if (!open) return null;
 
@@ -48,35 +115,42 @@ export default function ComboModal({ open, onClose }) {
         </div>
 
         <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
-          {combos.length === 0 ? (
+          {products.length === 0 ? (
             <p className="text-center">Không có combo nào khả dụng.</p>
           ) : (
             <div className="space-y-4">
-              {combos.map(combo => (
-                <div key={combo.id} className="flex items-center gap-4 border-b pb-4">
+              {products.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-4 border-b pb-4"
+                >
                   <img
-                    src={combo.image}
-                    alt={combo.name}
+                    src={getImageUrl(item.image)}
+                    alt={item.name}
                     className="w-16 h-16 rounded object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="font-semibold">{combo.name}</h3>
-                    <p className="text-sm text-gray-600">{combo.description}</p>
+                    <h3 className="font-semibold">{item.name}</h3>
+                    <p className="text-sm text-gray-600">{item.description}</p>
                     <p className="text-pink-600 font-bold">
-                      {combo.price.toLocaleString('vi-VN')}đ
+                      {item.price.toLocaleString('vi-VN')}đ
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => updateQuantity(combo.id, -1)}
-                      disabled={quantities[combo.id] === 0}
+                      onClick={() => updateQuantity(item.id, -1)}
+                      disabled={quantities[item.id] === 0}
                       className="px-2 py-1 border rounded disabled:opacity-30"
-                    >-</button>
-                    <span>{quantities[combo.id] || 0}</span>
+                    >
+                      -
+                    </button>
+                    <span>{quantities[item.id] || 0}</span>
                     <button
-                      onClick={() => updateQuantity(combo.id, 1)}
+                      onClick={() => updateQuantity(item.id, 1)}
                       className="px-2 py-1 border rounded"
-                    >+</button>
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
               ))}
@@ -85,15 +159,17 @@ export default function ComboModal({ open, onClose }) {
 
           <div className="flex justify-between items-center mt-6">
             <span className="font-semibold">Tổng cộng:</span>
-            <span className="text-pink-600 font-bold">{total.toLocaleString('vi-VN')}đ</span>
+            <span className="text-pink-600 font-bold">
+              {total.toLocaleString('vi-VN')}đ
+            </span>
           </div>
 
           <div className="text-right mt-6">
             <button
-              onClick={onClose}
+              onClick={handleConfirm}
               className="bg-pink-600 text-white px-6 py-2 rounded hover:bg-pink-700"
             >
-              Tiếp tục
+              Đặt vé
             </button>
           </div>
         </div>

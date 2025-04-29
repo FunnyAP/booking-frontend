@@ -57,7 +57,7 @@ export default function MovieDetail() {
         <meta name="description" content={movie.description} />
       </Head>
       <Header />
-      <div className="bg-black text-white py-8 px-4 min-h-screen">
+      <div className="bg-black text-white py-8 px-4 min-h-screen pt-[120px]">
         <div className="max-w-7xl mx-auto">
           <Button onClick={() => router.back()} startIcon={<ArrowLeft />} sx={{ color: 'white', mb: 2 }}>Quay lại</Button>
 
